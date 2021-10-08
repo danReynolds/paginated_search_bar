@@ -26,9 +26,9 @@ EndlessStateProperty resolveHeaderStateProperty({
 
 EndlessStateProperty resolveEmptyStateProperty({
   required PaginatedSearchBarBuilderStateProperty? emptyBuilderState,
-  required Widget? Function(BuildContext context) emptyBuilder,
+  required Widget? Function(BuildContext context)? emptyBuilder,
   required PaginatedSearchBarBuilderStateProperty? placeholderBuilderState,
-  required Widget? Function(BuildContext context) placeholderBuilder,
+  required Widget? Function(BuildContext context)? placeholderBuilder,
   required Set<PaginatedSearchBarState> states,
   required bool hasResolvedFirstSearchAboveMinLength,
 }) {
@@ -44,7 +44,11 @@ EndlessStateProperty resolveEmptyStateProperty({
             states,
           );
         }
-        return emptyBuilder(context);
+        if (emptyBuilder != null) {
+          return emptyBuilder(context);
+        }
+
+        return null;
       }
 
       if (placeholderBuilderState != null) {
@@ -54,7 +58,9 @@ EndlessStateProperty resolveEmptyStateProperty({
         );
       }
 
-      return placeholderBuilder(context);
+      if (placeholderBuilder != null) {
+        return placeholderBuilder(context);
+      }
     },
   );
 }

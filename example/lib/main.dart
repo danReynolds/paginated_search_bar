@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paginated_search_bar/paginated_search_bar.dart';
-import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
+import 'package:endless/endless.dart';
 
 class ExampleItem {
   final String title;
@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     ExampleItemPager pager = ExampleItemPager();
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -101,17 +102,15 @@ class _MyHomePageState extends State<MyHomePage> {
               child: PaginatedSearchBar<ExampleItem>(
                 maxHeight: 300,
                 emptyBuilder: (context) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text('No items'),
-                  );
+                  return const Text('No items');
                 },
                 placeholderBuilder: (context) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text("I'm a placeholder!"),
-                  );
+                  return const Text("I'm a placeholder!");
                 },
+                paginationDelegate: EndlessPaginationDelegate(
+                  pageSize: 20,
+                  maxPages: 3,
+                ),
                 onSearch: ({
                   required pageIndex,
                   required pageSize,
