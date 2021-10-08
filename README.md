@@ -1,39 +1,161 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Paginated Search Bar
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+A search bar library that let's you search for items and paginate them in a results list. By default it looks like this:
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+![Basic demo gif](./demo.gif).
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+It supports extensive customization with custom styling, headers, placeholders, footers and more powered by the [Endless](https://github.com/danReynolds/endless) infinite scroll view library.
 
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+![Advanced demo gif](./advanced-demo.gif)
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
-const like = 'sample';
+class ExampleItem {
+  final String title;
+
+  ExampleItem({
+    required this.title,
+  });
+}
+
+PaginatedSearchBar<ExampleItem>(
+  onSearch: ({
+    required pageIndex,
+    required pageSize,
+    required searchQuery,
+  }) async {
+    // Call your search API to return a list of items
+    return [
+      ExampleItem(title: 'Item 0'),
+      ExampleItem(title: 'Item 1'),
+    ];
+  },
+  itemBuilder: (
+    context, {
+    required item,
+    required index,
+  }) {
+    return Text(item.title);
+  },
+);
 ```
 
-## Additional information
+In this basic usage, all you need to get started is an `onSearch` function for fetching data and an `itemBuilder` for how it should be displayed in the search results list.
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+## Advanced Usage
+
+```dart
+PaginatedSearchBar<ExampleItem>(
+  maxHeight: 300,
+  hintText: 'Search',
+  headerBuilderState: PaginatedSearchBarBuilderStateProperty.empty((context) {
+    return const Text("I'm a header that only shows when the results are empty!");
+  }),
+  emptyBuilder: (context) {
+    return const Text("I'm an empty state!");
+  },
+  paginationDelegate: EndlessPaginationDelegate(
+    pageSize: 20,
+    maxPages: 3,
+  ),
+  onSearch: ({
+    required pageIndex,
+    required pageSize,
+    required searchQuery,
+  }) async {
+    return Future.delayed(const Duration(milliseconds: 1300), () {
+      if (searchQuery == "empty") {
+        return [];
+      }
+
+      if (pageIndex == 0) {
+        pager = ExampleItemPager();
+      }
+
+      return pager.nextBatch();
+    });
+  },
+  itemBuilder: (
+    context, {
+    required item,
+    required index,
+  }) {
+    return Text(item.title);
+  },
+);
+```
+
+In this more advanced example, we've provided a few more customization options including an `emptyBuilder` and `headerBuilderState`. All of the builder functions like `emptyBuilder` provide the current `BuildContext` and return a widget to display. Each builder function additionally has a corresponding `StateProperty` builder like we see with `headerBuilderState`. The `PaginatedSearchBar` library uses the [State property](https://pub.dev/packages/state_property) pattern for customizing the display of the widget based on the state of the system.
+
+The complete list of paginated search bar states are:
+
+```dart
+enum PaginatedSearchBarState {
+  /// Present when the search bar is searching for items. Triggered when they update their search
+  /// query in the input.
+  searching,
+
+  /// Present when the search bar is fetching a page of items either as a result of a modified search query
+  /// or by scrolling to the bottom of the list view and triggering the next page load.
+  loading,
+
+  /// Present when the search bar has no matching items for the current search query.
+  empty,
+
+  /// Present when the search bar has no more items to fetch for the current search query. Triggered
+  /// when the [PaginatedSearchBar.onSearch] function returns fewer than [PaginatedSearchBar.pageLimit]
+  /// items or [EndlessPaginationDelegate.maxPage] has been reached and no more items can be fetched.
+  done,
+
+  /// Present the input is currently focused.
+  focused,
+
+  /// Present when the list view is expanded with content such as items, an empty state or a placeholder state.
+  expanded
+}
+```
+
+State properties builders then let us customize what we build based on these states. In the above example with `headerBuilderState`, we specified that it should only build the widget when the search results are empty.
+
+If we instead wanted it show be shown when the search results are empty or done, we could use the state property `resolveWith` builder:
+
+```dart
+PaginatedSearchBar<ExampleItem>(
+  headerBuilderState: PaginatedSearchBarBuilderStateProperty.resolveWith((context, states) {
+    if (states.contain(PaginatedSearchBarState.empty) || states.contain(PaginatedSearchBarState.done)) {
+      return const Text("I'm a header that only shows when the results are empty or done!");
+    }
+  }),
+  onSearch: ({
+    required pageIndex,
+    required pageSize,
+    required searchQuery,
+  }) async {
+    return Future.delayed(const Duration(milliseconds: 1300), () {
+      if (searchQuery == "empty") {
+        return [];
+      }
+
+      if (pageIndex == 0) {
+        pager = ExampleItemPager();
+      }
+
+      return pager.nextBatch();
+    });
+  },
+  itemBuilder: (
+    context, {
+    required item,
+    required index,
+  }) {
+    return Text(item.title);
+  },
+);
+```
+
+The state properties are available for builders and style properties of the [PaginatedSearchBar].
+
+## Feedback
+
+Let us know if there are any additional features or customization options you'd like to see to make a helpful search bar.
