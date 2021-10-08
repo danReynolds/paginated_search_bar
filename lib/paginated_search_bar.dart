@@ -12,6 +12,7 @@ import 'package:rxdart/rxdart.dart';
 
 class PaginatedSearchBar<T> extends StatefulWidget {
   final Duration? resizeDuration;
+  final Duration? debounceDuration;
   final String? hintText;
   final int minSearchLength;
   final Future<List<T>> Function({
@@ -24,10 +25,8 @@ class PaginatedSearchBar<T> extends StatefulWidget {
   final EndlessPaginationDelegate? paginationDelegate;
   final TextEditingController? inputController;
   final bool autoFocus;
-  final bool showBorderBelowMinSearchThreshold;
   final EdgeInsets? itemPadding;
   final EdgeInsets? padding;
-  final Duration? searchDebounce;
   final void Function({T item, String searchQuery})? onSubmit;
 
   final TextStyle? inputStyle;
@@ -68,7 +67,6 @@ class PaginatedSearchBar<T> extends StatefulWidget {
   const PaginatedSearchBar({
     required this.itemBuilder,
     required this.onSearch,
-    this.searchDebounce,
     this.containerDecoration,
     this.containerDecorationState,
     this.inputStyle,
@@ -95,7 +93,7 @@ class PaginatedSearchBar<T> extends StatefulWidget {
     this.listController,
     this.onSubmit,
     this.inputController,
-    this.showBorderBelowMinSearchThreshold = true,
+    this.debounceDuration,
     this.autoFocus = false,
     this.minSearchLength = 3,
     this.resizeDuration = const Duration(milliseconds: 250),
@@ -148,7 +146,7 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
         // Use a zero duration debounce when the user backs out of the min value so it instantly hides results. Otherwise,
         // when they are typing above the min results value, we use a debounce of 200ms to delay the search requests
         value.length >= widget.minSearchLength
-            ? widget.searchDebounce ?? const Duration(milliseconds: 200)
+            ? widget.debounceDuration ?? const Duration(milliseconds: 200)
             : Duration.zero,
       );
     }).listen(
