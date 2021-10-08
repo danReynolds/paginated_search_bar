@@ -262,6 +262,7 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
       setState(() {
         _searchQuery = '';
         _prevSearchQuery = '';
+        _hasResolvedFirstSearchAboveMinLength = false;
       });
     }
 

@@ -1,6 +1,6 @@
 name: paginated_search_bar
 description: A search bar library that let's you search for items and paginate them in a results list.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/danReynolds/paginated_search_bar
 
 environment:
