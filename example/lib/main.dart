@@ -83,6 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 emptyBuilder: (context) {
                   return const Text("I'm an empty state!");
                 },
+                placeholderBuilder: (context) {
+                  return const Text("I'm a placeholder state!");
+                },
                 paginationDelegate: EndlessPaginationDelegate(
                   pageSize: 20,
                   maxPages: 3,

@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  endless: ^1.4.1
+  endless: ^1.5.2
   rxdart: ^0.27.2
   state_property: ^1.1.1
 

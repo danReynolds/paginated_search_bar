@@ -22,9 +22,6 @@ enum PaginatedSearchBarState {
 
   /// Present the input is currently focused.
   focused,
-
-  /// Present when the list view is expanded with content such as items, an empty state or a placeholder state.
-  expanded
 }
 
 class PaginatedSearchBarBuilderStateProperty
@@ -102,17 +99,6 @@ class PaginatedSearchBarBuilderStateProperty
             StateProperty.resolveState<PaginatedSearchBarState, Widget>(
           () => builder(context),
           PaginatedSearchBarState.done,
-        ),
-      );
-
-  /// Resolves the given builder if the scroll view is currently in the done state.
-  static PaginatedSearchBarBuilderStateProperty expanded(
-          StatelessWidgetResolver builder) =>
-      PaginatedSearchBarBuilderStateProperty(
-        (BuildContext context) =>
-            StateProperty.resolveState<PaginatedSearchBarState, Widget>(
-          () => builder(context),
-          PaginatedSearchBarState.expanded,
         ),
       );
 
@@ -194,17 +180,6 @@ class PaginatedSearchBarStyleStateProperty<ResolverType>
           PaginatedSearchBarState.empty,
         ),
       );
-
-  static PaginatedSearchBarStyleStateProperty<ResolverType>
-      expanded<ResolverType>(
-    StatelessResolver<ResolverType?> builder,
-  ) =>
-          PaginatedSearchBarStyleStateProperty<ResolverType>(
-            StateProperty.resolveState<PaginatedSearchBarState, ResolverType?>(
-              builder,
-              PaginatedSearchBarState.expanded,
-            ),
-          );
 
   static PaginatedSearchBarStyleStateProperty<ResolverType>
       focused<ResolverType>(
