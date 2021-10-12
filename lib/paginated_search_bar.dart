@@ -189,11 +189,12 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
 
   String _searchQuery = '';
   String _prevSearchQuery = '';
-  bool _isSearching = false;
   bool _isFocused = false;
   bool _isExpanded = false;
   bool _hasResolvedFirstSearchAboveMinLength = false;
-  Set<EndlessState> _listStates = {EndlessState.empty};
+  Set<PaginatedSearchBarState> _searchBarStates = {
+    PaginatedSearchBarState.empty
+  };
 
   T? _topItem;
 
@@ -247,8 +248,6 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
           return;
         }
 
-        _isSearching = true;
-
         _paginatedListViewController.reload();
       },
     );
@@ -293,13 +292,6 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
   build(context) {
     _updateListViewBorderAfterBuild();
 
-    final states = resolveSearchStates(
-      listStates: _listStates,
-      isSearching: _isSearching,
-      isFocused: _isFocused,
-      isExpanded: _isExpanded,
-    );
-
     return FocusScope(
       child: Focus(
         onFocusChange: (isFocused) {
@@ -334,12 +326,12 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
                     style: resolveInputStyleStateProperty(
                       inputStyleState: widget.inputStyleState,
                       inputStyle: widget.inputStyle,
-                      states: states,
+                      states: _searchBarStates,
                     ),
                     decoration: resolveInputDecorationStateProperty(
                       inputDecorationState: widget.inputDecorationState,
                       inputDecoration: widget.inputDecoration,
-                      states: states,
+                      states: _searchBarStates,
                       hintText: widget.hintText,
                     ),
                   ),
@@ -347,7 +339,8 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
               ),
               resolveSpacerStateProperty(
                 context: context,
-                states: states,
+                states: _searchBarStates,
+                isExpanded: _isExpanded,
                 spacerBuilder: widget.spacerBuilder,
                 spacerBuilderState: widget.spacerBuilderState,
               ),
@@ -370,13 +363,25 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
                     padding: widget.padding,
                     itemPadding: widget.itemPadding,
                     onStateChange: (listStates) {
-                      if (_isSearching &&
-                          !listStates.contains(EndlessState.loading)) {
+                      final updatedSearchBarStates = resolveSearchStates(
+                        listStates: listStates,
+                        isFocused: _isFocused,
+                      );
+
+                      // The first search above the min search length should not show the empty
+                      // state while it's loading. We record once we've finished the first search
+                      // so that subsequent searches can know to show the empty state.
+                      if (!_hasResolvedFirstSearchAboveMinLength &&
+                          _searchQuery.length >= widget.minSearchLength &&
+                          _searchBarStates
+                              .contains(PaginatedSearchBarState.searching) &&
+                          !updatedSearchBarStates
+                              .contains(PaginatedSearchBarState.searching)) {
                         _hasResolvedFirstSearchAboveMinLength = true;
-                        _isSearching = false;
                       }
+
                       setState(() {
-                        _listStates = listStates;
+                        _searchBarStates = updatedSearchBarStates;
                       });
                     },
                     loadMore: (pageIndex) async {
@@ -396,7 +401,7 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
                     headerBuilderState: resolveHeaderStateProperty(
                       headerBuilder: widget.headerBuilder,
                       headerBuilderState: widget.headerBuilderState,
-                      states: states,
+                      searchBarStates: _searchBarStates,
                     ),
                     itemBuilder: (
                       context, {
@@ -420,19 +425,19 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
                       emptyBuilder: widget.emptyBuilder,
                       placeholderBuilder: widget.placeholderBuilder,
                       placeholderBuilderState: widget.placeholderBuilderState,
-                      states: states,
+                      searchBarStates: _searchBarStates,
                       hasResolvedFirstSearchAboveMinLength:
                           _hasResolvedFirstSearchAboveMinLength,
                     ),
                     loadingBuilderState: resolveLoadingStateProperty(
                       loadingBuilderState: widget.loadingBuilderState,
                       loadingBuilder: widget.loadingBuilder,
-                      states: states,
+                      searchBarStates: _searchBarStates,
                     ),
                     footerBuilderState: resolveFooterStateProperty(
                       footerBuilder: widget.footerBuilder,
                       footerBuilderState: widget.footerBuilderState,
-                      states: states,
+                      searchBarStates: _searchBarStates,
                     ),
                   ),
                 ),
@@ -442,7 +447,7 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
           decoration: resolveContainerStyleStateProperty(
             containerDecorationState: widget.containerDecorationState,
             containerDecoration: widget.containerDecoration,
-            states: states,
+            states: _searchBarStates,
           ),
         ),
       ),

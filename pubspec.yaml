@@ -1,6 +1,6 @@
 name: paginated_search_bar
 description: A search bar library that let's you search for items and paginate them in a results list.
-version: 1.0.1
+version: 1.1.0
 homepage: https://github.com/danReynolds/paginated_search_bar
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  endless: ^1.4.1
+  endless: ^1.5.2
   rxdart: ^0.27.2
   state_property: ^1.1.1
 

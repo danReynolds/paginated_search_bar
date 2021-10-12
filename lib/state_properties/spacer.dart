@@ -5,6 +5,7 @@ import 'package:paginated_search_bar/widgets/line_spacer.dart';
 Widget resolveSpacerStateProperty({
   required BuildContext context,
   required Set<PaginatedSearchBarState> states,
+  required bool isExpanded,
   required Widget? Function(BuildContext context)? spacerBuilder,
   required PaginatedSearchBarBuilderStateProperty? spacerBuilderState,
 }) {
@@ -12,7 +13,7 @@ Widget resolveSpacerStateProperty({
     return spacerBuilderState.resolve(context, states) ?? const SizedBox();
   }
 
-  if (states.contains(PaginatedSearchBarState.expanded)) {
+  if (isExpanded) {
     if (spacerBuilder != null) {
       return spacerBuilder(context) ?? const SizedBox();
     }

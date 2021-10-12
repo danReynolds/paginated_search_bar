@@ -3,22 +3,19 @@ import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
 
 Set<PaginatedSearchBarState> resolveSearchStates({
   required Set<EndlessState> listStates,
-  required bool isSearching,
   required bool isFocused,
-  required bool isExpanded,
 }) {
   final states = <PaginatedSearchBarState>{};
 
-  if (isSearching) {
+  // The search bar is searching if it is loading after the endless list view has been
+  // marked as it will clear its items when the current load finishes.
+  if (listStates.contains(EndlessState.loading) &&
+      listStates.contains(EndlessState.willClear)) {
     states.add(PaginatedSearchBarState.searching);
   }
 
   if (isFocused) {
     states.add(PaginatedSearchBarState.focused);
-  }
-
-  if (isExpanded) {
-    states.add(PaginatedSearchBarState.expanded);
   }
 
   if (listStates.contains(EndlessState.done)) {

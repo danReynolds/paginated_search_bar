@@ -1,6 +1,7 @@
 import 'package:endless/endless.dart';
 import 'package:flutter/material.dart';
 import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
+import 'package:paginated_search_bar/utils/paginated_search_state.dart';
 
 /// By default the paginated search bar will show a border between the search input and
 /// the list view when the list view is expanded (the list view either has items,
@@ -8,14 +9,19 @@ import 'package:paginated_search_bar/paginated_search_bar_state_property.dart';
 EndlessStateProperty resolveHeaderStateProperty({
   required PaginatedSearchBarBuilderStateProperty? headerBuilderState,
   required Widget? Function(BuildContext context)? headerBuilder,
-  required Set<PaginatedSearchBarState> states,
+  required Set<PaginatedSearchBarState> searchBarStates,
 }) {
-  return EndlessStateProperty.all(
-    (context) {
+  return EndlessStateProperty.resolveWith(
+    (context, listStates) {
+      final newSearchBarStates = resolveSearchStates(
+        listStates: listStates,
+        isFocused: searchBarStates.contains(PaginatedSearchBarState.focused),
+      );
+
       if (headerBuilderState != null) {
         return headerBuilderState.resolve(
           context,
-          states,
+          newSearchBarStates,
         );
       } else if (headerBuilder != null) {
         return headerBuilder(context);
@@ -29,19 +35,21 @@ EndlessStateProperty resolveEmptyStateProperty({
   required Widget? Function(BuildContext context)? emptyBuilder,
   required PaginatedSearchBarBuilderStateProperty? placeholderBuilderState,
   required Widget? Function(BuildContext context)? placeholderBuilder,
-  required Set<PaginatedSearchBarState> states,
+  required Set<PaginatedSearchBarState> searchBarStates,
   required bool hasResolvedFirstSearchAboveMinLength,
 }) {
-  return EndlessStateProperty.all(
-    (context) {
-      // If empty (the list view wouldn't call this code if it was) and it has already
-      // resolved its first search above the min length, then we know we are able to show
-      // the empty state.
+  return EndlessStateProperty.resolveWith(
+    (context, listStates) {
+      final newSearchBarStates = resolveSearchStates(
+        listStates: listStates,
+        isFocused: searchBarStates.contains(PaginatedSearchBarState.focused),
+      );
+
       if (hasResolvedFirstSearchAboveMinLength) {
         if (emptyBuilderState != null) {
           return emptyBuilderState.resolve(
             context,
-            states,
+            newSearchBarStates,
           );
         }
         if (emptyBuilder != null) {
@@ -54,7 +62,7 @@ EndlessStateProperty resolveEmptyStateProperty({
       if (placeholderBuilderState != null) {
         return placeholderBuilderState.resolve(
           context,
-          states,
+          newSearchBarStates,
         );
       }
 
@@ -68,16 +76,21 @@ EndlessStateProperty resolveEmptyStateProperty({
 EndlessStateProperty resolveLoadingStateProperty({
   required PaginatedSearchBarBuilderStateProperty? loadingBuilderState,
   required Widget? Function(BuildContext context)? loadingBuilder,
-  required Set<PaginatedSearchBarState> states,
+  required Set<PaginatedSearchBarState> searchBarStates,
 }) {
-  return EndlessStateProperty.all(
-    (context) {
+  return EndlessStateProperty.resolveWith(
+    (context, listStates) {
+      final newSearchBarStates = resolveSearchStates(
+        listStates: listStates,
+        isFocused: searchBarStates.contains(PaginatedSearchBarState.focused),
+      );
+
       if (loadingBuilderState != null) {
-        return loadingBuilderState.resolve(context, states);
+        return loadingBuilderState.resolve(context, newSearchBarStates);
       }
 
-      if (states.contains(PaginatedSearchBarState.loading) &&
-          !states.contains(PaginatedSearchBarState.searching)) {
+      if (newSearchBarStates.contains(PaginatedSearchBarState.loading) &&
+          !newSearchBarStates.contains(PaginatedSearchBarState.searching)) {
         if (loadingBuilder != null) {
           return loadingBuilder(context);
         }
@@ -92,14 +105,19 @@ EndlessStateProperty resolveLoadingStateProperty({
 EndlessStateProperty resolveFooterStateProperty({
   required PaginatedSearchBarBuilderStateProperty? footerBuilderState,
   required Widget? Function(BuildContext context)? footerBuilder,
-  required Set<PaginatedSearchBarState> states,
+  required Set<PaginatedSearchBarState> searchBarStates,
 }) {
-  return EndlessStateProperty.all(
-    (context) {
+  return EndlessStateProperty.resolveWith(
+    (context, listStates) {
+      final newSearchBarStates = resolveSearchStates(
+        listStates: listStates,
+        isFocused: searchBarStates.contains(PaginatedSearchBarState.focused),
+      );
+
       if (footerBuilderState != null) {
         return footerBuilderState.resolve(
           context,
-          states,
+          newSearchBarStates,
         );
       } else if (footerBuilder != null) {
         return footerBuilder(context);
