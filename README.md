@@ -110,9 +110,6 @@ enum PaginatedSearchBarState {
 
   /// Present the input is currently focused.
   focused,
-
-  /// Present when the list view is expanded with content such as items, an empty state or a placeholder state.
-  expanded
 }
 ```
 
