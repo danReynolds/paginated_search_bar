@@ -64,16 +64,15 @@ PaginatedSearchBar<ExampleItem>(
     required pageSize,
     required searchQuery,
   }) async {
-    return Future.delayed(const Duration(milliseconds: 1300), () {
+    return Future.delayed(const Duration(milliseconds: 1000), () {
       if (searchQuery == "empty") {
         return [];
       }
 
-      if (pageIndex == 0) {
-        pager = ExampleItemPager();
-      }
-
-      return pager.nextBatch();
+      return [
+        ExampleItem(title: 'Page $pageIndex item 1'),
+        ExampleItem(title: 'Page $pageIndex item 2'),
+      ];
     });
   },
   itemBuilder: (
@@ -129,16 +128,15 @@ PaginatedSearchBar<ExampleItem>(
     required pageSize,
     required searchQuery,
   }) async {
-    return Future.delayed(const Duration(milliseconds: 1300), () {
+    return Future.delayed(const Duration(milliseconds: 1000), () {
       if (searchQuery == "empty") {
         return [];
       }
 
-      if (pageIndex == 0) {
-        pager = ExampleItemPager();
-      }
-
-      return pager.nextBatch();
+      return [
+        ExampleItem(title: 'Page $pageIndex item 1'),
+        ExampleItem(title: 'Page $pageIndex item 2'),
+      ];
     });
   },
   itemBuilder: (
