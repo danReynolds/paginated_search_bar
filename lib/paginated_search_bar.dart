@@ -64,8 +64,11 @@ class PaginatedSearchBar<T> extends StatefulWidget {
   final EdgeInsets? padding;
 
   /// The handler for when a user submits the search bar input field by hitting `enter`. Provides the top item from
-  /// the current of search results as the implied chosen result.
-  final void Function({required T item, required String searchQuery})? onSubmit;
+  /// the current of search results if it exists as the chosen result.
+  final void Function({
+    required T? item,
+    required String searchQuery,
+  })? onSubmit;
 
   /// The style for the text in the search bar input.
   final TextStyle? inputStyle;
@@ -312,9 +315,9 @@ class _PaginatedSearchBarState<T> extends State<PaginatedSearchBar<T>>
                   child: TextFormField(
                     controller: _inputController,
                     onFieldSubmitted: (searchQuery) {
-                      if (widget.onSubmit != null && _topItem != null) {
+                      if (widget.onSubmit != null) {
                         widget.onSubmit!(
-                          item: _topItem!,
+                          item: _topItem,
                           searchQuery: searchQuery,
                         );
                       }

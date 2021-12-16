@@ -1,3 +1,7 @@
+## 1.1.2
+
+Notify of empty submitted item
+
 ## 1.1.1
 
 Fix bug with required props for `onSubmit` argument
