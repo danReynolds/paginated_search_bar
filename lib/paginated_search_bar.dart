@@ -65,7 +65,7 @@ class PaginatedSearchBar<T> extends StatefulWidget {
 
   /// The handler for when a user submits the search bar input field by hitting `enter`. Provides the top item from
   /// the current of search results as the implied chosen result.
-  final void Function({T item, String searchQuery})? onSubmit;
+  final void Function({required T item, required String searchQuery})? onSubmit;
 
   /// The style for the text in the search bar input.
   final TextStyle? inputStyle;

@@ -1,3 +1,7 @@
+## 1.1.1
+
+Fix bug with required props for `onSubmit` argument
+
 ## 1.1.0
 
 * Fixes bugs with rebuilds caused by changes to the expanded/is searching states.
